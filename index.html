@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>App Gestão & Consulta Dinâmica</title>
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --azul-destaque: #2563eb;
+      --verde-acao: #059669;
+      --cinza-borda: #cbd5e1;
+      --texto-forte: #0f172a;
+      --texto-suave: #64748b;
+      --perigo: #dc2626;
+      --sombra: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --raio: 12px;
+      --largura-sidebar: 240px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--texto-forte);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* BARRA LATERAL (Desktop) / NAVEGAÇÃO INFERIOR (Mobile) */
+    .menu-navegacao {
+      background-color: var(--sidebar-bg);
+      display: flex;
+      z-index: 50;
+    }
+
+    .brand {
+      display: none;
+      padding: 20px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--sidebar-hover);
+    }
+
+    .menu-itens {
+      list-style: none;
+      display: flex;
+      width: 100%;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .menu-btn.ativo {
+      color: #ffffff;
+      background-color: var(--azul-destaque);
+    }
+
+    .menu-icon { font-size: 1.25rem; }
+
+    @media (min-width: 768px) {
+      .menu-navegacao {
+        width: var(--largura-sidebar);
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+      }
+      .brand { display: flex; }
+      .menu-itens {
+        flex-direction: column;
+        padding: 15px 10px;
+        gap: 8px;
+      }
+      .menu-btn {
+        padding: 12px 16px;
+        border-radius: 8px;
+      }
+      .conteudo-principal {
+        margin-left: var(--largura-sidebar);
+        padding: 30px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      body { flex-direction: column; }
+      .menu-navegacao {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        border-top: 1px solid var(--sidebar-hover);
+      }
+      .menu-itens {
+        justify-content: space-around;
+        align-items: center;
+      }
+      .menu-btn {
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 0.75rem;
+      }
+      .menu-btn.ativo {
+        background: transparent;
+        color: #38bdf8;
+      }
+      .conteudo-principal {
+        padding: 16px;
+        margin-bottom: 80px;
+      }
+    }
+
+    .conteudo-principal {
+      flex: 1;
+      width: 100%;
+      max-width: 950px;
+    }
+
+    .tela-app {
+      display: none;
+      animation: surgir 0.2s ease-in-out;
+    }
+    .tela-app.visivel { display: block; }
+
+    @keyframes surgir {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--raio);
+      padding: 20px;
+      box-shadow: var(--sombra);
+      border: 1px solid var(--cinza-borda);
+      margin-bottom: 16px;
+    }
+
+    .titulo-secao {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--texto-forte);
+      margin-bottom: 6px;
+    }
+    .subtitulo {
+      font-size: 0.85rem;
+      color: var(--texto-suave);
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 600px) {
+      .form-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--texto-suave);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      padding: 10px 12px;
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      background: #fff;
+    }
+    input, select { height: 46px; }
+    input:focus, select:focus, textarea:focus { border-color: var(--azul-destaque); }
+
+    .linha-categoria-custom { display: flex; gap: 8px; }
+    .btn-cat-gestao {
+      padding: 0 12px;
+      background: #f1f5f9;
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--texto-forte);
+    }
+
+    .bloco-personalizados {
+      background: #f8fafc;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .card-campo-custom {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-campo-custom-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .card-campo-custom textarea {
+      min-height: 90px;
+      line-height: 1.45;
+      resize: vertical;
+    }
+
+    .btn {
+      height: 46px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      transition: background 0.2s ease;
+    }
+    .btn-primario { background: var(--azul-destaque); color: #fff; }
+    .btn-secundario { background: #e2e8f0; color: var(--texto-forte); height: 40px; font-size: 0.85rem; }
+
+    .btn:disabled {
+      background: #94a3b8 !important;
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    /* BARRA DE PROGRESSO ANIMADA */
+    .container-progresso {
+      display: none;
+      margin-top: 14px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 14px;
+      position: relative;
+    }
+    .barra-progresso {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--azul-destaque), var(--verde-acao));
+      border-radius: 10px;
+      transition: width 0.15s linear;
+    }
+    .texto-progresso {
+      display: none;
+      font-size: 0.82rem;
+      color: var(--texto-suave);
+      text-align: center;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .barra-filtros-topo {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .btn-gaveta {
+      background: #fff;
+      border: 1.5px solid var(--cinza-borda);
+      color: var(--azul-destaque);
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .card-registro {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--cinza-borda);
+      margin-bottom: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    .card-registro-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .card-acoes {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-acao-card {
+      background: #f1f5f9;
+      border: 1px solid var(--cinza-borda);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-acao-card.deletar { color: var(--perigo); }
+    .btn-acao-card.editar { color: var(--azul-destaque); }
+    .btn-acao-card.copiar { color: #0284c7; }
+
+    .tag-cat {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .box-conteudo-longo {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .item-texto-formatado {
+      background: #f8fafc;
+      border-left: 3px solid var(--azul-destaque);
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.85rem;
+    }
+    .item-texto-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .btn-copiar-mini {
+      background: transparent;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      color: var(--texto-suave);
+    }
+    .item-texto-formatado p {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .gaveta-filtro {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      justify-content: flex-end;
+      flex-direction: column;
+      z-index: 100;
+      backdrop-filter: blur(2px);
+    }
+    .gaveta-conteudo {
+      background: #fff;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* MODAIS */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      animation: modalSurgir 0.25s ease-out;
+    }
+
+    @keyframes modalSurgir {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-icone-sucesso {
+      width: 64px;
+      height: 64px;
+      background-color: #d1fae5;
+      color: var(--verde-acao);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 16px auto;
+    }
+
+    .modal-icone-cadeado {
+      width: 64px;
+      height: 64px;
+      background-color: #eff6ff;
+      color: var(--azul-destaque);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 16px auto;
+    }
+
+    .modal-box h3 {
+      color: var(--texto-forte);
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .modal-box p {
+      color: var(--texto-suave);
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MODAL DE SENHA -->
+  <div class="modal-backdrop" id="modal-senha-admin">
+    <div class="modal-box">
+      <div class="modal-icone-cadeado">🔒</div>
+      <h3>Área Restrita</h3>
+      <p>Digite a senha de administrador para acessar o formulário ou autorizar alterações:</p>
+      <form id="form-autenticacao" onsubmit="event.preventDefault(); window.confirmarAcessoAdmin();">
+        <input 
+          type="password" 
+          id="campo-senha-modal" 
+          placeholder="Digite a senha..." 
+          style="width: 100%; text-align: center; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 14px;" 
+          required 
+          autocomplete="current-password"
+        />
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primario">Acessar</button>
+          <button type="button" class="btn btn-secundario" id="btn-cancelar-senha">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE SUCESSO -->
+  <div class="modal-backdrop" id="modal-sucesso">
+    <div class="modal-box">
+      <div class="modal-icone-sucesso">✓</div>
+      <h3 id="modal-titulo">Registro Gravado com Sucesso!</h3>
+      <p id="modal-mensagem">O registro foi armazenado com segurança e já está disponível na Matriz de Consulta.</p>
+      <button class="btn btn-primario" id="btn-fechar-modal">Ir para Consulta</button>
+    </div>
+  </div>
+
+  <!-- BARRA DE NAVEGAÇÃO -->
+  <nav class="menu-navegacao">
+    <div class="brand">
+      <span style="font-size: 1.3rem;">📋</span>
+      <span>App Gestão</span>
+    </div>
+    <ul class="menu-itens">
+      <li>
+        <button class="menu-btn ativo" id="btn-nav-consulta">
+          <span class="menu-icon">📋</span>
+          <span>Consulta</span>
+        </button>
+      </li>
+      <li>
+        <button class="menu-btn" id="btn-nav-novo">
+          <span class="menu-icon">➕</span>
+          <span>Novo Registro</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="conteudo-principal">
+
+    <!-- JANELA 1: CONSULTA -->
+    <section id="tela-consulta" class="tela-app visivel">
+      <h1 class="titulo-secao">Matriz de Consulta</h1>
+      <p class="subtitulo">Consulte, pesquise e copie dados cadastrados no sistema.</p>
+
+      <div class="barra-filtros-topo">
+        <input type="text" id="filtro-busca" placeholder="🔍 Pesquisar em todos os campos..." style="flex: 1;" />
+        <button class="btn-gaveta" id="btn-abrir-gaveta">Filtros Avançados</button>
+      </div>
+
+      <div id="lista-registros"></div>
+    </section>
+
+    <!-- JANELA 2: FORMULÁRIO -->
+    <section id="tela-novo-registro" class="tela-app">
+      <div class="card">
+        <h1 class="titulo-secao" id="form-titulo-modo">Cadastrar Registro</h1>
+        <p class="subtitulo">Preencha as informações do formulário e confirme a gravação.</p>
+
+        <form id="form-cadastro">
+          <input type="hidden" id="registro-edicao-id" value="" />
+
+          <div class="form-grid">
+            <div class="campo">
+              <label>Título / Identificador *</label>
+              <input type="text" id="campo-titulo" placeholder="Ex: Protocolo Fiscal #2026" required />
+            </div>
+
+            <div class="campo">
+              <label>Categoria Base *</label>
+              <div class="linha-categoria-custom">
+                <select id="campo-categoria" style="flex: 1;" required></select>
+                <button type="button" class="btn-cat-gestao" id="btn-gerenciar-cat" title="Gerenciar Categorias">⚙️ Categorias</button>
+              </div>
+            </div>
+
+            <div class="campo" style="grid-column: span 2;">
+              <label>Data de Registro *</label>
+              <input type="date" id="campo-data" required />
+            </div>
+          </div>
+
+          <!-- BLOCO DE CAMPOS PERSONALIZADOS -->
+          <div class="bloco-personalizados">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+              <label style="margin: 0;">Campos Personalizados (Textos Longos)</label>
+              <button type="button" class="btn btn-secundario" id="btn-add-extra" style="width: auto; padding: 0 12px;">
+                + Inserir Novo Campo
+              </button>
+            </div>
+            
+            <div id="container-campos-extras"></div>
+          </div>
+
+          <!-- BARRA DE PROGRESSO ANIMADA -->
+          <div class="container-progresso" id="container-progresso">
+            <div class="barra-progresso" id="barra-progresso"></div>
+          </div>
+          <div class="texto-progresso" id="texto-progresso">Gravando dados... 0%</div>
+
+          <div style="display: flex; gap: 10px; margin-top: 16px;">
+            <button type="submit" class="btn btn-primario" id="btn-salvar-form">Salvar Registro</button>
+            <button type="button" class="btn btn-secundario" id="btn-cancelar-edicao" style="display: none; width: auto;">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GAVETA DE FILTROS -->
+  <div class="gaveta-filtro" id="gaveta-filtros">
+    <div class="gaveta-conteudo">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="color: var(--texto-forte);">Filtros Avançados</h3>
+        <button id="btn-fechar-gaveta" style="border: none; background: transparent; font-size: 1.4rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div class="campo">
+        <label>Categoria</label>
+        <select id="filtro-categoria-avancado"></select>
+      </div>
+
+      <div class="campo">
+        <label>Período Inicial</label>
+        <input type="date" id="filtro-data-inicio" />
+      </div>
+
+      <div class="campo">
+        <label>Período Final</label>
+        <input type="date" id="filtro-data-fim" />
+      </div>
+
+      <div class="campo">
+        <label>Ordenação Temporal</label>
+        <select id="filtro-ordenacao">
+          <option value="recente">Mais Recentes</option>
+          <option value="antigo">Mais Antigos</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primario" id="btn-aplicar-filtros">Aplicar Filtros</button>
+      <button class="btn btn-secundario" id="btn-limpar-filtros">Limpar</button>
+    </div>
+  </div>
+
+  <script>
+    // Executa apenas quando todo o documento estiver 100% carregado
+    window.addEventListener("DOMContentLoaded", () => {
+      const SENHA_ADMIN = "admin123";
+
+      // 1. CARREGAMENTO BLINDADO DE DADOS (IMPEDE TELA EM BRANCO)
+      function obterDadosSeguros(chave, padrao) {
+        try {
+          const item = localStorage.getItem(chave);
+          return item ? JSON.parse(item) : padrao;
+        } catch (e) {
+          return padrao;
+        }
+      }
+
+      let registros = obterDadosSeguros("app_registros", [
+        {
+          id: "1",
+          titulo: "Parecer Técnico de Fiscalização",
+          categoria: "Fiscalização",
+          data: "2026-10-18",
+          camposExtras: {
+            "Relatório Circunstanciado": "Inspeção realizada com sucesso.\nLimites vistoriados e validados.",
+            "Fiscal Responsável": "Oliveira Junior"
+          }
+        }
+      ]);
+
+      function salvarRegistrosLocais() {
+        try {
+          localStorage.setItem("app_registros", JSON.stringify(registros));
+        } catch (e) {}
+      }
+
+      let listaCategorias = obterDadosSeguros("app_categorias", [
+        "Fiscalização", "Licenciamento", "Cadastro", "Geral"
+      ]);
+
+      function salvarCategorias() {
+        try {
+          localStorage.setItem("app_categorias", JSON.stringify(listaCategorias));
+        } catch (e) {}
+        atualizarSelectsCategoria();
+      }
+
+      function atualizarSelectsCategoria() {
+        const selectForm = document.getElementById("campo-categoria");
+        const selectFiltro = document.getElementById("filtro-categoria-avancado");
+
+        selectForm.innerHTML = '<option value="">Selecione...</option>' + 
+          listaCategorias.map(c => `<option value="${c}">${c}</option>`).join("");
+
+        selectFiltro.innerHTML = '<option value="">Todas as Categorias</option>' + 
+          listaCategorias.map(c => `<option value="${c}">${c}</option>`).join("");
+      }
+
+      // 2. MODAL DE SENHA
+      let callbackAposAutenticar = null;
+      const modalSenha = document.getElementById("modal-senha-admin");
+      const campoSenhaModal = document.getElementById("campo-senha-modal");
+      const btnCancelarSenha = document.getElementById("btn-cancelar-senha");
+
+      function solicitarSenhaAdmin(acaoSucesso) {
+        callbackAposAutenticar = acaoSucesso;
+        campoSenhaModal.value = "";
+        modalSenha.style.display = "flex";
+        setTimeout(() => campoSenhaModal.focus(), 150);
+      }
+
+      window.confirmarAcessoAdmin = function() {
+        if (campoSenhaModal.value === SENHA_ADMIN) {
+          modalSenha.style.display = "none";
+          if (typeof callbackAposAutenticar === "function") {
+            callbackAposAutenticar();
+          }
+        } else {
+          alert("Senha incorreta. Acesso não autorizado.");
+          campoSenhaModal.value = "";
+          campoSenhaModal.focus();
+        }
+      };
+
+      btnCancelarSenha.addEventListener("click", () => {
+        modalSenha.style.display = "none";
+        callbackAposAutenticar = null;
+      });
+
+      // 3. NAVEGAÇÃO ENTRE JANELAS
+      const telaConsulta = document.getElementById("tela-consulta");
+      const telaNovo = document.getElementById("tela-novo-registro");
+      const btnNavConsulta = document.getElementById("btn-nav-consulta");
+      const btnNavNovo = document.getElementById("btn-nav-novo");
+
+      function mudarTela(nomeTela) {
+        if (nomeTela === "consulta") {
+          telaConsulta.classList.add("visivel");
+          telaNovo.classList.remove("visivel");
+          btnNavConsulta.classList.add("ativo");
+          btnNavNovo.classList.remove("ativo");
+          renderizar();
+        } else {
+          telaNovo.classList.add("visivel");
+          telaConsulta.classList.remove("visivel");
+          btnNavNovo.classList.add("ativo");
+          btnNavConsulta.classList.remove("ativo");
+        }
+      }
+
+      btnNavConsulta.addEventListener("click", () => mudarTela("consulta"));
+
+      btnNavNovo.addEventListener("click", () => {
+        solicitarSenhaAdmin(() => {
+          resetarFormulario();
+          mudarTela("novo");
+        });
+      });
+
+      // 4. CONFIRMAÇÃO DE SUCESSO
+      const modalSucesso = document.getElementById("modal-sucesso");
+      const btnFecharModal = document.getElementById("btn-fechar-modal");
+
+      function abrirModalSucesso(titulo, mensagem) {
+        document.getElementById("modal-titulo").innerText = titulo;
+        document.getElementById("modal-mensagem").innerText = mensagem;
+        modalSucesso.style.display = "flex";
+      }
+
+      btnFecharModal.addEventListener("click", () => {
+        modalSucesso.style.display = "none";
+        mudarTela("consulta");
+      });
+
+      // 5. CÓPIA DE DADOS
+      window.copiarTexto = function(texto, labelSucesso = "Copiado com sucesso!") {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(texto).then(() => {
+            alert(labelSucesso);
+          }).catch(() => fallbackCopiar(texto, labelSucesso));
+        } else {
+          fallbackCopiar(texto, labelSucesso);
+        }
+      };
+
+      function fallbackCopiar(texto, labelSucesso) {
+        const t = document.createElement("textarea");
+        t.value = texto;
+        t.style.position = "fixed";
+        t.style.left = "-9999px";
+        document.body.appendChild(t);
+        t.focus();
+        t.select();
+        try {
+          document.execCommand('copy');
+          alert(labelSucesso);
+        } catch (e) {
+          alert("Não foi possível copiar.");
+        }
+        document.body.removeChild(t);
+      }
+
+      window.copiarRegistroCompleto = function(id) {
+        const item = registros.find(r => r.id === id);
+        if (!item) return;
+
+        const [ano, mes, dia] = item.data.split("-");
+        let texto = `REGISTRO: ${item.titulo}\nCATEGORIA: ${item.categoria}\nDATA: ${dia}/${mes}/${ano}\n----------------------------------------\n`;
+        if (item.camposExtras) {
+          Object.entries(item.camposExtras).forEach(([k, v]) => {
+            texto += `[${k}]:\n${v}\n\n`;
+          });
+        }
+        window.copiarTexto(texto.trim(), "Registro completo copiado com sucesso!");
+      };
+
+      // 6. GESTÃO DE CATEGORIAS
+      document.getElementById("btn-gerenciar-cat").addEventListener("click", () => {
+        solicitarSenhaAdmin(() => {
+          const acao = prompt("1 - Adicionar nova categoria\n2 - Renomear categoria\n3 - Excluir categoria\nDigite a opção desejada:");
+          if (acao === "1") {
+            const nova = prompt("Nome da nova categoria:");
+            if (nova && !listaCategorias.includes(nova.trim())) {
+              listaCategorias.push(nova.trim());
+              salvarCategorias();
+              alert("Categoria criada com sucesso!");
+            }
+          } else if (acao === "2") {
+            const atual = prompt("Nome exato da categoria para renomear:\n" + listaCategorias.join(", "));
+            const idx = listaCategorias.indexOf(atual);
+            if (idx !== -1) {
+              const novoNome = prompt("Novo nome:", atual);
+              if (novoNome) {
+                listaCategorias[idx] = novoNome.trim();
+                salvarCategorias();
+                alert("Categoria atualizada com sucesso!");
+              }
+            }
+          } else if (acao === "3") {
+            const remover = prompt("Nome exato da categoria para excluir:\n" + listaCategorias.join(", "));
+            const idx = listaCategorias.indexOf(remover);
+            if (idx !== -1) {
+              listaCategorias.splice(idx, 1);
+              salvarCategorias();
+              alert("Categoria excluída com sucesso!");
+            }
+          }
+        });
+      });
+
+      // 7. CAMPOS PERSONALIZADOS
+      const containerExtras = document.getElementById("container-campos-extras");
+
+      function criarCampoExtra(chave = "", valor = "") {
+        const card = document.createElement("div");
+        card.className = "card-campo-custom";
+        card.innerHTML = `
+          <div class="card-campo-custom-header">
+            <input type="text" placeholder="Nome do Atributo (ex: Parecer, Histórico...)" class="extra-chave" value="${chave}" required style="flex: 1;" />
+            <button type="button" class="btn-acao-card deletar" style="height: 44px; padding: 0 14px;">✕ Excluir</button>
+          </div>
+          <textarea placeholder="Digite aqui o texto detalhado..." class="extra-valor" required>${valor}</textarea>
+        `;
+
+        card.querySelector(".deletar").addEventListener("click", () => card.remove());
+        containerExtras.appendChild(card);
+      }
+
+      document.getElementById("btn-add-extra").addEventListener("click", () => criarCampoExtra());
+
+      // 8. EDIÇÃO E EXCLUSÃO
+      window.iniciarEdicao = function (id) {
+        solicitarSenhaAdmin(() => {
+          const reg = registros.find(r => r.id === id);
+          if (!reg) return;
+
+          document.getElementById("registro-edicao-id").value = reg.id;
+          document.getElementById("campo-titulo").value = reg.titulo;
+          document.getElementById("campo-categoria").value = reg.categoria;
+          document.getElementById("campo-data").value = reg.data;
+
+          containerExtras.innerHTML = "";
+          if (reg.camposExtras) {
+            Object.entries(reg.camposExtras).forEach(([k, v]) => criarCampoExtra(k, v));
+          }
+
+          document.getElementById("form-titulo-modo").innerText = "Editar Registro (Administrador)";
+          document.getElementById("btn-salvar-form").innerText = "Atualizar Registro";
+          document.getElementById("btn-cancelar-edicao").style.display = "inline-flex";
+
+          mudarTela("novo");
+        });
+      };
+
+      window.solicitarExclusao = function (id) {
+        solicitarSenhaAdmin(() => {
+          if (!confirm("Tem certeza que deseja excluir este registro?")) return;
+          registros = registros.filter(r => r.id !== id);
+          salvarRegistrosLocais();
+          renderizar();
+          alert("Registro excluído com sucesso!");
+        });
+      };
+
+      function resetarFormulario() {
+        document.getElementById("form-cadastro").reset();
+        document.getElementById("registro-edicao-id").value = "";
+        containerExtras.innerHTML = "";
+        document.getElementById("form-titulo-modo").innerText = "Cadastrar Registro";
+        
+        const btnSalvar = document.getElementById("btn-salvar-form");
+        btnSalvar.disabled = false;
+        btnSalvar.innerHTML = "Salvar Registro";
+        
+        document.getElementById("container-progresso").style.display = "none";
+        document.getElementById("texto-progresso").style.display = "none";
+        document.getElementById("barra-progresso").style.width = "0%";
+        document.getElementById("btn-cancelar-edicao").style.display = "none";
+      }
+
+      document.getElementById("btn-cancelar-edicao").addEventListener("click", () => {
+        resetarFormulario();
+        mudarTela("consulta");
+      });
+
+      // 9. ANIMAÇÃO DE CARREGAMENTO RÁPIDA E REAL
+      function animarBarraProgresso(callbackFinal) {
+        const containerProg = document.getElementById("container-progresso");
+        const textoProg = document.getElementById("texto-progresso");
+        const barraProg = document.getElementById("barra-progresso");
+
+        containerProg.style.display = "block";
+        textoProg.style.display = "block";
+
+        let porcentagem = 0;
+        const intervalo = setInterval(() => {
+          porcentagem += 20;
+          if (porcentagem > 100) porcentagem = 100;
+          
+          barraProg.style.width = porcentagem + "%";
+          textoProg.innerText = `Gravando dados... ${porcentagem}%`;
+
+          if (porcentagem === 100) {
+            clearInterval(intervalo);
+            setTimeout(callbackFinal, 200);
+          }
+        }, 50);
+      }
+
+      // 10. GRAVAÇÃO
+      const form = document.getElementById("form-cadastro");
+      const btnSalvar = document.getElementById("btn-salvar-form");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        btnSalvar.disabled = true;
+        btnSalvar.innerHTML = "Processando Registro...";
+
+        const idEdicao = document.getElementById("registro-edicao-id").value;
+        const extras = {};
+        const chaves = containerExtras.querySelectorAll(".extra-chave");
+        const valores = containerExtras.querySelectorAll(".extra-valor");
+        chaves.forEach((k, i) => {
+          if (k.value.trim()) extras[k.value.trim()] = valores[i].value.trim();
+        });
+
+        const dadosRegistro = {
+          titulo: document.getElementById("campo-titulo").value,
+          categoria: document.getElementById("campo-categoria").value,
+          data: document.getElementById("campo-data").value,
+          camposExtras: extras,
+          atualizadoEm: Date.now()
+        };
+
+        animarBarraProgresso(() => {
+          if (idEdicao) {
+            const idx = registros.findIndex(r => r.id === idEdicao);
+            if (idx !== -1) registros[idx] = { id: idEdicao, ...dadosRegistro };
+            salvarRegistrosLocais();
+            abrirModalSucesso("Registro Atualizado!", `"${dadosRegistro.titulo}" foi gravado com sucesso.`);
+          } else {
+            dadosRegistro.id = Date.now().toString();
+            dadosRegistro.criadoEm = Date.now();
+            registros.unshift(dadosRegistro);
+            salvarRegistrosLocais();
+            abrirModalSucesso("Novo Registro Gravado!", `"${dadosRegistro.titulo}" foi adicionado com sucesso à base.`);
+          }
+
+          resetarFormulario();
+        });
+      });
+
+      // 11. GAVETA DE FILTROS
+      const gaveta = document.getElementById("gaveta-filtros");
+      document.getElementById("btn-abrir-gaveta").addEventListener("click", () => gaveta.style.display = "flex");
+      document.getElementById("btn-fechar-gaveta").addEventListener("click", () => gaveta.style.display = "none");
+      document.getElementById("btn-aplicar-filtros").addEventListener("click", () => {
+        gaveta.style.display = "none";
+        renderizar();
+      });
+      document.getElementById("btn-limpar-filtros").addEventListener("click", () => {
+        document.getElementById("filtro-categoria-avancado").value = "";
+        document.getElementById("filtro-data-inicio").value = "";
+        document.getElementById("filtro-data-fim").value = "";
+        document.getElementById("filtro-busca").value = "";
+        gaveta.style.display = "none";
+        renderizar();
+      });
+
+      document.getElementById("filtro-busca").addEventListener("input", renderizar);
+
+      // 12. RENDERIZAÇÃO DA TABELA
+      function renderizar() {
+        const termo = document.getElementById("filtro-busca").value.toLowerCase();
+        const cat = document.getElementById("filtro-categoria-avancado").value;
+        const dtIni = document.getElementById("filtro-data-inicio").value;
+        const dtFim = document.getElementById("filtro-data-fim").value;
+        const ordem = document.getElementById("filtro-ordenacao").value;
+
+        let filtrados = registros.filter(item => {
+          const textoExtras = Object.values(item.camposExtras || {}).join(" ").toLowerCase();
+          const bateTexto = item.titulo.toLowerCase().includes(termo) || textoExtras.includes(termo);
+          const bateCat = !cat || item.categoria === cat;
+          let bateData = true;
+          if (dtIni && item.data < dtIni) bateData = false;
+          if (dtFim && item.data > dtFim) bateData = false;
+          return bateTexto && bateCat && bateData;
+        });
+
+        filtrados.sort((a, b) => {
+          if (ordem === "recente") return b.data.localeCompare(a.data);
+          return a.data.localeCompare(b.data);
+        });
+
+        const lista = document.getElementById("lista-registros");
+        lista.innerHTML = "";
+
+        if (filtrados.length === 0) {
+          lista.innerHTML = '<div style="text-align:center; padding:35px; color:#94a3b8;">Nenhum registro encontrado.</div>';
+          return;
+        }
+
+        filtrados.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "card-registro";
+          const [ano, mes, dia] = item.data.split("-");
+
+          let blocosTextoLongo = "";
+          if (item.camposExtras && Object.keys(item.camposExtras).length > 0) {
+            blocosTextoLongo = Object.entries(item.camposExtras).map(([chave, texto]) => {
+              const textoEscapado = encodeURIComponent(texto);
+              return `
+                <div class="item-texto-formatado">
+                  <div class="item-texto-topo">
+                    <strong>${chave}</strong>
+                    <button class="btn-copiar-mini" onclick="window.copiarTexto(decodeURIComponent('${textoEscapado}'), 'Campo ${chave} copiado!')">📋 Copiar</button>
+                  </div>
+                  <p>${texto}</p>
+                </div>
+              `;
+            }).join("");
+          }
+
+          card.innerHTML = `
+            <div class="card-registro-header">
+              <div>
+                <strong style="font-size: 1.05rem;">${item.titulo}</strong>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">Data: ${dia}/${mes}/${ano}</div>
+              </div>
+              <div class="card-acoes">
+                <span class="tag-cat">${item.categoria}</span>
+                <button class="btn-acao-card copiar" onclick="window.copiarRegistroCompleto('${item.id}')">📋 Copiar Tudo</button>
+                <button class="btn-acao-card editar" onclick="window.iniciarEdicao('${item.id}')">✏️ Editar</button>
+                <button class="btn-acao-card deletar" onclick="window.solicitarExclusao('${item.id}')">🗑️ Excluir</button>
+              </div>
+            </div>
+            ${blocosTextoLongo ? `<div class="box-conteudo-longo">${blocosTextoLongo}</div>` : ""}
+          `;
+          lista.appendChild(card);
+        });
+      }
+
+      // INICIALIZAÇÃO SEGURA
+      atualizarSelectsCategoria();
+      renderizar();
+    });
+  </script>
+</body>
+</html>

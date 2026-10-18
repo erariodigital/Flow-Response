@@ -1,0 +1,23 @@
+{
+  "name": "App Gestão e Matriz Dinâmica",
+  "short_name": "Gestão",
+  "description": "Sistema de gestão e matriz de consulta dinâmica",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
