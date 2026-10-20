@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>App Gestão & Consulta Dinâmica</title>
 
-  <!-- CONFIGURAÇÕES DE APLICATIVO (PWA / MOBILE) -->
+  <!-- PWA & MOBILE CONFIGURAÇÕES -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="App Gestão" />
@@ -14,11 +14,9 @@
   <!-- LOGO EMBUTIDA EM ALTA RESOLUÇÃO -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230f172a'/%3E%3Crect x='40' y='40' width='432' height='432' rx='90' fill='%232563eb'/%3E%3Crect x='130' y='140' width='252' height='260' rx='24' fill='%23ffffff'/%3E%3Crect x='200' y='110' width='112' height='54' rx='14' fill='%230f172a'/%3E%3Crect x='170' y='210' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='250' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='290' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='330' width='110' height='16' rx='8' fill='%23059669'/%3E%3C/svg%3E" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230f172a'/%3E%3Crect x='40' y='40' width='432' height='432' rx='90' fill='%232563eb'/%3E%3Crect x='130' y='140' width='252' height='260' rx='24' fill='%23ffffff'/%3E%3Crect x='200' y='110' width='112' height='54' rx='14' fill='%230f172a'/%3E%3Crect x='170' y='210' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='250' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='290' width='172' height='16' rx='8' fill='%2394a3b8'/%3E%3Crect x='170' y='330' width='110' height='16' rx='8' fill='%23059669'/%3E%3C/svg%3E" />
-
-  <!-- MANIFEST INTEGRADO PARA INSTALAÇÃO NO CELULAR/PC -->
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22App%20Gest%C3%A3o%20e%20Consulta%22%2C%22short_name%22%3A%22Gest%C3%A3o%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%7D" />
 
-  <!-- BIBLIOTECA SUPABASE (LEVE E OTIMIZADA) -->
+  <!-- CLIENTE SUPABASE OFICIAL -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -185,7 +183,7 @@
       margin-bottom: 18px;
     }
 
-    /* FORMULÁRIO RESPONSIVO (SEM CORTES) */
+    /* FORMULÁRIO RESPONSIVO HARMONIZADO */
     .form-grid {
       display: flex;
       flex-direction: column;
@@ -321,7 +319,7 @@
       font-weight: 600;
     }
 
-    /* BARRA DE PESQUISA */
+    /* BARRA DE FILTROS */
     .barra-filtros-topo {
       display: flex;
       gap: 8px;
@@ -340,7 +338,7 @@
       flex-shrink: 0;
     }
 
-    /* CARDS DE CONSULTA HARMONIZADOS */
+    /* CARDS DE CONSULTA */
     .card-registro {
       background: #fff;
       border-radius: 10px;
@@ -535,7 +533,7 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGAÇÃO -->
+  <!-- NAVEGAÇÃO -->
   <nav class="menu-navegacao">
     <div class="brand">
       <span style="font-size: 1.3rem;">📋</span>
@@ -661,12 +659,12 @@
     </div>
   </div>
 
-  <!-- SCRIPT ROBUSTO COM SUPORTE SUPABASE E LOCAL -->
+  <!-- SCRIPT INTEGRADO COM SUPABASE E ORDENAÇÃO ALFABÉTICA -->
   <script>
     (function () {
       const SENHA_ADMIN = "admin123";
 
-      // CONFIGURAÇÃO SUPABASE (Substitua pelas suas chaves quando criar o projeto)
+      // 1. CHAVES SUPABASE (Cole suas chaves copiadas do Supabase aqui)
       const SUPABASE_URL = "https://ecgflxjflgvcoesohijj.supabase.co";
       const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjZ2ZseGpmbGd2Y29lc29oaWpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MzA1MDEsImV4cCI6MjEwODAwNjUwMX0._CcweF__NB1_S-ODoXGQJi-3EBxgN2P07H2XhK94Zwc";
 
@@ -675,24 +673,14 @@
         try {
           clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch (e) {
-          console.warn("Supabase não inicializado, rodando local.");
+          console.warn("Supabase não carregado, usando modo local.");
         }
       }
 
+      // Memória Segura
       const memoriaInterna = {
-        registros: [
-          {
-            id: "1",
-            titulo: "Parecer Técnico de Fiscalização",
-            categoria: "Fiscalização",
-            data: "2026-10-18",
-            camposExtras: {
-              "Relatório Circunstanciado": "Inspeção realizada com sucesso.\nLimites vistoriados e validados.",
-              "Fiscal Responsável": "Oliveira Junior"
-            }
-          }
-        ],
-        categorias: ["Fiscalização", "Licenciamento", "Cadastro", "Geral"]
+        registros: [],
+        categorias: ["Administrativo", "Cadastro", "Fiscalização", "Geral", "Licenciamento", "Operacional"]
       };
 
       function obterItemSeguro(chave, padrao) {
@@ -717,6 +705,7 @@
       let registros = obterItemSeguro("registros", memoriaInterna.registros);
       let listaCategorias = obterItemSeguro("categorias", memoriaInterna.categorias);
 
+      // Elementos do DOM
       const telaConsulta = document.getElementById("tela-consulta");
       const telaNovo = document.getElementById("tela-novo-registro");
       const btnNavConsulta = document.getElementById("btn-nav-consulta");
@@ -735,30 +724,13 @@
       const barraProg = document.getElementById("barra-progresso");
       const textoProg = document.getElementById("texto-progresso");
 
-      async function carregarRegistrosNuvem() {
-        if (!clienteSupabase) return;
-        try {
-          const { data, error } = await clienteSupabase
-            .from("registros")
-            .select("*")
-            .order("criado_em", { ascending: false });
-
-          if (!error && data && data.length > 0) {
-            registros = data.map(r => ({
-              id: r.id,
-              titulo: r.titulo,
-              categoria: r.categoria,
-              data: r.data,
-              camposExtras: r.campos_extras || {},
-              criadoEm: r.criado_em
-            }));
-            salvarItemSeguro("registros", registros);
-            renderizar();
-          }
-        } catch (err) {}
+      // ORDENAÇÃO ALFABÉTICA DAS CATEGORIAS (A até Z)
+      function ordenarCategorias() {
+        listaCategorias.sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
       }
 
-      function atualizarCategorias() {
+      function atualizarSelectsCategorias() {
+        ordenarCategorias();
         const selectForm = document.getElementById("campo-categoria");
         const selectFiltro = document.getElementById("filtro-categoria-avancado");
 
@@ -769,13 +741,67 @@
           listaCategorias.map(c => `<option value="${c}">${c}</option>`).join("");
       }
 
+      // SINCRONIZAÇÃO COMPLETA: REGISTROS E CATEGORIAS DA NUVEM
+      async function sincronizarNuvem() {
+        if (!clienteSupabase) return;
+
+        try {
+          // 1. Carrega TODAS as Categorias da Nuvem
+          const { data: dadosCat, error: errCat } = await clienteSupabase
+            .from("categorias_app")
+            .select("nome");
+
+          if (!errCat && dadosCat && dadosCat.length > 0) {
+            const novasCategorias = dadosCat.map(item => item.nome.trim());
+            novasCategorias.forEach(c => {
+              if (!listaCategorias.includes(c)) listaCategorias.push(c);
+            });
+            ordenarCategorias();
+            salvarItemSeguro("categorias", listaCategorias);
+            atualizarSelectsCategorias();
+          }
+
+          // 2. Carrega TODOS os Registros da Nuvem (Sem truncar)
+          const { data: dadosReg, error: errReg } = await clienteSupabase
+            .from("registros")
+            .select("*")
+            .order("criado_em", { ascending: false });
+
+          if (!errReg && dadosReg && dadosReg.length > 0) {
+            const registrosNuvem = dadosReg.map(r => ({
+              id: r.id,
+              titulo: r.titulo,
+              categoria: r.categoria,
+              data: r.data,
+              camposExtras: r.campos_extras || {},
+              criadoEm: r.criado_em
+            }));
+
+            // Mescla sem perder registros
+            registrosNuvem.forEach(remoto => {
+              const idx = registros.findIndex(l => l.id === remoto.id);
+              if (idx !== -1) {
+                registros[idx] = remoto;
+              } else {
+                registros.push(remoto);
+              }
+            });
+
+            salvarItemSeguro("registros", registros);
+            renderizar();
+          }
+        } catch (err) {
+          console.warn("Sincronização em segundo plano:", err.message);
+        }
+      }
+
       function mudarTela(nome) {
         if (nome === "consulta") {
           telaConsulta.classList.add("visivel");
           telaNovo.classList.remove("visivel");
           btnNavConsulta.classList.add("ativo");
           btnNavNovo.classList.remove("ativo");
-          carregarRegistrosNuvem();
+          sincronizarNuvem();
           renderizar();
         } else {
           telaNovo.classList.add("visivel");
@@ -787,6 +813,7 @@
 
       btnNavConsulta.addEventListener("click", () => mudarTela("consulta"));
 
+      // Autenticação com Senha
       let callbackAposSenha = null;
       function pedirSenhaAdmin(callback) {
         callbackAposSenha = callback;
@@ -819,36 +846,60 @@
         });
       });
 
+      // Gestão de Categorias (Sincronizada na Nuvem)
       document.getElementById("btn-gerenciar-cat").addEventListener("click", () => {
-        pedirSenhaAdmin(() => {
-          const acao = prompt("1 - Nova Categoria\n2 - Renomear\n3 - Excluir\nDigite o número:");
+        pedirSenhaAdmin(async () => {
+          const acao = prompt("1 - Nova Categoria\n2 - Renomear Categoria\n3 - Excluir Categoria\nDigite o número desejado:");
           if (acao === "1") {
-            const nova = prompt("Nome da categoria:");
+            const nova = prompt("Nome da nova categoria:");
             if (nova && !listaCategorias.includes(nova.trim())) {
-              listaCategorias.push(nova.trim());
+              const catFormatada = nova.trim();
+              listaCategorias.push(catFormatada);
+              ordenarCategorias();
               salvarItemSeguro("categorias", listaCategorias);
-              atualizarCategorias();
-              alert("Categoria adicionada!");
+              atualizarSelectsCategorias();
+
+              if (clienteSupabase) {
+                try {
+                  await clienteSupabase.from("categorias_app").upsert([{ nome: catFormatada, criado_em: Date.now() }]);
+                } catch (e) {}
+              }
+              alert("Categoria adicionada com sucesso!");
             }
           } else if (acao === "2") {
-            const atual = prompt("Nome da categoria para renomear:\n" + listaCategorias.join(", "));
+            const atual = prompt("Nome exato da categoria para renomear:\n" + listaCategorias.join(", "));
             const idx = listaCategorias.indexOf(atual);
             if (idx !== -1) {
-              const novo = prompt("Novo nome:", atual);
-              if (novo) {
-                listaCategorias[idx] = novo.trim();
+              const novoNome = prompt("Novo nome:", atual);
+              if (novoNome) {
+                const renomeada = novoNome.trim();
+                listaCategorias[idx] = renomeada;
+                ordenarCategorias();
                 salvarItemSeguro("categorias", listaCategorias);
-                atualizarCategorias();
+                atualizarSelectsCategorias();
+
+                if (clienteSupabase) {
+                  try {
+                    await clienteSupabase.from("categorias_app").delete().eq("nome", atual);
+                    await clienteSupabase.from("categorias_app").upsert([{ nome: renomeada, criado_em: Date.now() }]);
+                  } catch (e) {}
+                }
                 alert("Categoria renomeada!");
               }
             }
           } else if (acao === "3") {
-            const del = prompt("Nome da categoria para excluir:\n" + listaCategorias.join(", "));
+            const del = prompt("Nome exato da categoria para excluir:\n" + listaCategorias.join(", "));
             const idx = listaCategorias.indexOf(del);
             if (idx !== -1) {
               listaCategorias.splice(idx, 1);
               salvarItemSeguro("categorias", listaCategorias);
-              atualizarCategorias();
+              atualizarSelectsCategorias();
+
+              if (clienteSupabase) {
+                try {
+                  await clienteSupabase.from("categorias_app").delete().eq("nome", del);
+                } catch (e) {}
+              }
               alert("Categoria excluída!");
             }
           }
@@ -860,7 +911,7 @@
         div.className = "card-campo-custom";
         div.innerHTML = `
           <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" placeholder="Nome do Campo (ex: Parecer, Despacho...)" class="extra-chave" value="${chave}" required style="flex:1;" />
+            <input type="text" placeholder="Nome do Campo (ex: Fiscal, Parecer...)" class="extra-chave" value="${chave}" required style="flex:1;" />
             <button type="button" class="btn-acao-card deletar" style="height:44px; padding:0 14px;">✕ Excluir</button>
           </div>
           <textarea placeholder="Digite aqui o texto detalhado..." class="extra-valor" required>${valor}</textarea>
@@ -884,13 +935,14 @@
             clearInterval(timer);
             setTimeout(aoConcluir, 150);
           }
-        }, 35);
+        }, 30);
       }
 
+      // GRAVAÇÃO COM MESCLAGEM TOTAL
       formCadastro.addEventListener("submit", (e) => {
         e.preventDefault();
         btnSalvarForm.disabled = true;
-        btnSalvarForm.innerText = "Processando Registro...";
+        btnSalvarForm.innerText = "Sincronizando Registro...";
 
         const idEdicao = document.getElementById("registro-edicao-id").value;
         const extras = {};
@@ -924,9 +976,8 @@
                 }).eq("id", idEdicao);
               } catch (e) {}
             }
-
             document.getElementById("modal-titulo").innerText = "Registro Atualizado!";
-            document.getElementById("modal-mensagem").innerText = `"${novoRegistro.titulo}" foi atualizado com sucesso.`;
+            document.getElementById("modal-mensagem").innerText = `"${novoRegistro.titulo}" foi atualizado na nuvem.`;
           } else {
             novoRegistro.id = Date.now().toString();
             novoRegistro.criadoEm = Date.now();
@@ -944,9 +995,8 @@
                 }]);
               } catch (e) {}
             }
-
             document.getElementById("modal-titulo").innerText = "Novo Registro Gravado!";
-            document.getElementById("modal-mensagem").innerText = `"${novoRegistro.titulo}" foi cadastrado com sucesso.`;
+            document.getElementById("modal-mensagem").innerText = `"${novoRegistro.titulo}" foi adicionado com sucesso.`;
           }
 
           salvarItemSeguro("registros", registros);
@@ -1011,7 +1061,6 @@
               await clienteSupabase.from("registros").delete().eq("id", id);
             } catch (e) {}
           }
-
           renderizar();
           alert("Registro excluído com sucesso!");
         });
@@ -1082,8 +1131,8 @@
         });
 
         filtrados.sort((a, b) => {
-          if (ordem === "recente") return b.data.localeCompare(a.data);
-          return a.data.localeCompare(b.data);
+          if (ordem === "recente") return (b.criadoEm || 0) - (a.criadoEm || 0);
+          return (a.criadoEm || 0) - (b.criadoEm || 0);
         });
 
         const lista = document.getElementById("lista-registros");
@@ -1132,8 +1181,9 @@
         });
       }
 
-      atualizarCategorias();
-      carregarRegistrosNuvem();
+      // INICIALIZAÇÃO
+      atualizarSelectsCategorias();
+      sincronizarNuvem();
       renderizar();
     })();
   </script>
